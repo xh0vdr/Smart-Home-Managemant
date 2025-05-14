@@ -190,7 +190,9 @@ int main() {
         Vector2f mousePos;
 
         while (window.pollEvent(event)) {
-            if (event.type == Event::Closed) window.close();
+            
+            if (event.type == Event::Closed)
+                window.close();
             if (event.type == Event::MouseWheelScrolled) {
                 scrollOffset -= event.mouseWheelScroll.delta * 30;
                 if (scrollOffset < 0) scrollOffset = 0;
@@ -201,12 +203,16 @@ int main() {
             }
             if ((inAddMode || inEditMode) && event.type == Event::TextEntered) {
                 if (event.text.unicode == 8) {
-                    if (typingRoom && !inputRoom.empty()) inputRoom.pop_back();
-                    else if (!typingRoom && !inputName.empty()) inputName.pop_back();
+                    if (typingRoom && !inputRoom.empty()) 
+                        inputRoom.pop_back();
+                    else if (!typingRoom && !inputName.empty())
+                        inputName.pop_back();
                 }
                 else if (event.text.unicode < 128 && event.text.unicode != 13) {
-                    if (!typingRoom && inputName.length() < 20) inputName += static_cast<char>(event.text.unicode);
-                    else if (typingRoom && inputRoom.length() < 20) inputRoom += static_cast<char>(event.text.unicode);
+                    if (!typingRoom && inputName.length() < 20)
+                        inputName += (char)event.text.unicode;
+                    else if (typingRoom && inputRoom.length() < 20) 
+                        inputRoom += (char)event.text.unicode;
                 }
             }
             if (inAddShortcutMode && event.type == Event::TextEntered) {
@@ -214,17 +220,21 @@ int main() {
                     inputShortcutName.pop_back();
                 }
                 else if (event.text.unicode < 128 && event.text.unicode != 13 && inputShortcutName.length() < 20) {
-                    inputShortcutName += static_cast<char>(event.text.unicode);
+                    inputShortcutName += (char)event.text.unicode;
                 }
             }
             if (loginScreen && event.type == Event::TextEntered) {
                 if (event.text.unicode == 8) {
-                    if (typingPassword && !inputPass.empty()) inputPass.pop_back();
-                    else if (!typingPassword && !inputUser.empty()) inputUser.pop_back();
+                    if (typingPassword && !inputPass.empty())
+                        inputPass.pop_back();
+                    else if (!typingPassword && !inputUser.empty()) 
+                        inputUser.pop_back();
                 }
                 else if (event.text.unicode < 128 && event.text.unicode != 13) {
-                    if (typingPassword && inputPass.size() < 20) inputPass += static_cast<char>(event.text.unicode);
-                    else if (!typingPassword && inputUser.size() < 20) inputUser += static_cast<char>(event.text.unicode);
+                    if (typingPassword && inputPass.size() < 20)
+                        inputPass += (char)event.text.unicode;
+                    else if (!typingPassword && inputUser.size() < 20) 
+                        inputUser += (char)event.text.unicode;
                 }
             }
         }
@@ -307,6 +317,15 @@ int main() {
                         loginScreen = false;
                         devices[deviceCount++] = new Light("Wall Light", "Bedroom");
                     }
+                    else {
+			Text error("Invalid username or password", font, 20);
+				error.setFillColor(Color::Red);
+				error.setPosition(250, 460);
+				window.draw(error);
+				window.display();
+				sleep(seconds(2));
+				inputUser = inputPass = "";
+}
                 }
             }
             window.display();
@@ -596,20 +615,11 @@ int main() {
                 else if (type == "Door") 
                     doorCount++;
             }
-
-            if (!devicesOn.empty() && devicesOn[devicesOn.length() - 2] == ',') {
-                devicesOn = devicesOn.substr(0, devicesOn.length() - 2);
-            }
-            if (!devicesOff.empty() && devicesOff[devicesOff.length() - 2] == ',') {
-                devicesOff = devicesOff.substr(0, devicesOff.length() - 2);
-            }
-
+            
             string stats[] = {
                 "Total Devices: " + to_string(deviceCount),
                 "Devices ON: " + to_string(totalOn),
                 "Devices OFF: " + to_string(totalOff),
-                devicesOn.empty() ? "Devices ON: None" : devicesOn,
-                devicesOff.empty() ? "Devices OFF: None" : devicesOff,
                 "Lights: " + to_string(lightCount),
                 "Fans: " + to_string(fanCount),
                 "ACs: " + to_string(acCount),
